@@ -1,5 +1,4 @@
 {% extends "auctions/layout.html" %}
-
 {% block body %}
     <h2>creat new listing</h2>
    
@@ -22,15 +21,18 @@
             <input type="number" name="Price" class="form-control" id="Price" placeholder="Enter Price">
           </div>
           <div class="form-group">
-            <select name="category" id="category" class="custom-select">
-                <option selected>Open this select menu</option>
-                <option value="1">One</option>
-                <option value="2">Two</option>
-                <option value="3">Three</option>
-              </select>
+            <!-- <select name="category" id="category" class="custom-select">
+              <option selected>Open this select menu</option>
+              {% for item in cat%}
+                <option value="{{item}}"> {{item}} </option>
+                {% endfor %}
+              </select> -->
+              {% include 'auctions/skrt.html' %}
         </div>
         <button type="submit" class="btn btn-success">Creat New Listing</button>
     </form>
 
-    <h1>name is {{itemName}}</h1>
+
+    
+
 {% endblock %}

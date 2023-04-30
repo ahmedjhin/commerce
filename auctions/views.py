@@ -4,19 +4,37 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User
-
+from .models import User, Catagory, Listing
+from .form import MyForm
 
 def index(request):
     return render(request, "auctions/index.html")
 
 
+
+
 def createListeing(request):
-    if request.method == 'POST':
-        itemName = request.POST.get('title')
-        return render(request, "auctions/create.html",{'itemName': itemName})
+    if request.method == 'GET':
+        allCategories = Catagory.objects.all()
+        return render(request, "auctions/create.html",{'catagories':allCategories})
     else:
-        return render(request, "auctions/create.html",)
+        title = request.POST.get('title')
+        description = request.POST.get('Description')
+        imageUrl = request.POST.get('ImageUrl')
+        price = request.POST.get('Price')
+        category = request.POST.get('category')
+
+        currentUser = request.user
+
+        newListing = Listing(
+            title=title,
+            description=description,
+            imageUrl=imageUrl,
+            price=float(price),
+            category=category,
+        )
+        newListing.save()
+        return HttpResponseRedirect(reverse(index))
 
 def login_view(request):
     if request.method == "POST":
@@ -24,6 +42,7 @@ def login_view(request):
         # Attempt to sign user in
         username = request.POST["username"]
         password = request.POST["password"]
+        
         user = authenticate(request, username=username, password=password)
 
         # Check if authentication successful
