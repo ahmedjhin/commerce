@@ -8,10 +8,22 @@ from .models import User, Catagory, Listing
 from .form import MyForm
 
 def index(request):
-    return render(request, "auctions/index.html")
+    if request.method == 'GET':
+        activeListings = Listing.objects.filter(isActive=True)
+        allCategories = Catagory.objects.all()
+        return render(request, "auctions/index.html",{
+        'listings': activeListings,'catagories':allCategories
+        })
 
-
-
+def displayCategory(request):
+    if request.method == 'POST':
+        selectedCategory = request.POST.get('category')
+        category = Catagory.objects.get(categoryName=selectedCategory)
+        activeListings = Listing.objects.filter(isActive=True,Catagory=category)
+        allCategories = Catagory.objects.all()
+        return render(request, "auctions/index.html",{
+        'listings': activeListings,'catagories':allCategories
+        })
 
 def createListeing(request):
     if request.method == 'GET':
@@ -26,12 +38,16 @@ def createListeing(request):
 
         currentUser = request.user
 
+        categoryData = Catagory.objects.get(categoryName=category)
+
+
         newListing = Listing(
             title=title,
             description=description,
             imageUrl=imageUrl,
             price=float(price),
-            category=category,
+            category=categoryData,
+            owner=currentUser
         )
         newListing.save()
         return HttpResponseRedirect(reverse(index))

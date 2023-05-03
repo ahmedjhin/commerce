@@ -21,13 +21,13 @@
             <input type="number" name="Price" class="form-control" id="Price" placeholder="Enter Price">
           </div>
           <div class="form-group">
-            <!-- <select name="category" id="category" class="custom-select">
+            <select name="category" id="category" class="custom-select">
               <option selected>Open this select menu</option>
-              {% for item in cat%}
+              {% for item in catagories%}
                 <option value="{{item}}"> {{item}} </option>
                 {% endfor %}
-              </select> -->
-              {% include 'auctions/skrt.html' %}
+              </select>
+             
         </div>
         <button type="submit" class="btn btn-success">Creat New Listing</button>
     </form>

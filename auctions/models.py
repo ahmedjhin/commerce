@@ -21,6 +21,7 @@ class Listing(models.Model):
     isActive = models.BooleanField(default=True)
     owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="user")
     category = models.ForeignKey(Catagory, on_delete=models.CASCADE, blank=True, null=True, related_name="category")
+    created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.title
