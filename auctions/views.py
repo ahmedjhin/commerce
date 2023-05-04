@@ -19,7 +19,7 @@ def displayCategory(request):
     if request.method == 'POST':
         selectedCategory = request.POST.get('category')
         category = Catagory.objects.get(categoryName=selectedCategory)
-        activeListings = Listing.objects.filter(isActive=True,Catagory=category)
+        activeListings = Listing.objects.filter(isActive=True,category=category)
         allCategories = Catagory.objects.all()
         return render(request, "auctions/index.html",{
         'listings': activeListings,'catagories':allCategories

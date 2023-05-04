@@ -1,12 +1,12 @@
 {% extends "auctions/layout.html" %} {% block body %}
 <h2>Active Listings</h2>
-<form action="{url 'selectedCategory'}" method="POST">
+<form action="{%url 'displayCategory'%}" method="POST">
     {% csrf_token %}
     <button type="submit" class="btn btn-warning">Select</button>
     <select name="category" id="category" class="custom-select">
-        <option selected>Open this select menu</option>
+        <option value="" disabled selected>Open this select menu</option>
         {% for item in catagories%}
-        <option value="{{item}}"> {{item}} </option>
+        <option value="{{item.categoryName}}" name="{{item.categoryName}}"> {{item.categoryName}} </option>
         {% endfor %}
     </select>
 </form>
@@ -24,4 +24,5 @@
     </div>
     {% endfor %}
 </div>
+  
  {% endblock %}
