@@ -9,4 +9,6 @@ urlpatterns = [
     path("register", views.register, name="register"),
     path('create', views.createListeing, name="create"),
     path('selectedCategory', views.displayCategory, name='displayCategory'),
+    path('creatCategory',views.creatCategory, name='creatCategory'),
+    #path('listing/<int:id>', views.listing, name='listing'),
 ]

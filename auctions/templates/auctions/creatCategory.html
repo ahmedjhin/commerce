@@ -1,0 +1,12 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<form action="{%url 'creatCategory'%}" method="POST">
+    {% csrf_token %}
+    <label for="cateonew">categoryname</label>
+    <input type="text" name="cateonew" id="cateonew">
+    <button type="submit">ok</button>
+</form>
+
+{% endblock %}

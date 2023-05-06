@@ -14,6 +14,21 @@ def index(request):
         return render(request, "auctions/index.html",{
         'listings': activeListings,'catagories':allCategories
         })
+    
+
+def creatCategory(request):
+    if request.method == 'GET':
+        creatCategory = Catagory.objects.all()
+        return render(request, "auctions/creatCategory.html",{'creatCategory':creatCategory})
+    else:
+        newCategory = request.POST.get('cateonew')
+
+        newcategeo = Catagory(
+           categoryName = newCategory
+        )
+
+        newcategeo.save()
+        return HttpResponseRedirect(reverse(index))
 
 def displayCategory(request):
     if request.method == 'POST':
