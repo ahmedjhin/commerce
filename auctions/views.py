@@ -22,7 +22,10 @@ def creatCategory(request):
         return render(request, "auctions/creatCategory.html",{'creatCategory':creatCategory})
     else:
         newCategory = request.POST.get('cateonew')
-
+        if newCategory == "":
+            message = "Couldn't find category"
+            return render(request, "auctions/creatCategory.html",{'message': message})
+        
         newcategeo = Catagory(
            categoryName = newCategory
         )

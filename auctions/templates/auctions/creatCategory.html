@@ -4,9 +4,9 @@
 
 <form action="{%url 'creatCategory'%}" method="POST">
     {% csrf_token %}
-    <label for="cateonew">categoryname</label>
-    <input type="text" name="cateonew" id="cateonew">
-    <button type="submit">ok</button>
+    <label class="input-group-text" for="cateonew">categoryname</label>
+    <input  class="form-control" type="text" name="cateonew" id="cateonew">
+    <button class="btn btn-primary" type="submit">ok</button>
 </form>
-
+<h1>{{message}}</h1>
 {% endblock %}
