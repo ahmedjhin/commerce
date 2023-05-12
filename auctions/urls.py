@@ -11,4 +11,5 @@ urlpatterns = [
     path('selectedCategory', views.displayCategory, name='displayCategory'),
     path('creatCategory',views.creatCategory, name='creatCategory'),
     #path('listing/<int:id>', views.listing, name='listing'),
+    path('watchlist/<int:pk>/', views.watchlist, name='watchlist'),
 ]

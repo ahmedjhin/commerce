@@ -25,3 +25,9 @@ class Listing(models.Model):
     
     def __str__(self):
         return self.title
+    
+
+# class bids(models.Model):
+#     bids = models.FloatField()
+#     owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="user")
+#     listname = models.ForeignKey(Listing)

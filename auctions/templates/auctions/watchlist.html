@@ -1,0 +1,18 @@
+{% extends "auctions/layout.html" %}
+
+{% block body %}
+
+<div class="row">
+    {% for listing in watchedListing %}
+    <div class="card" style="width: 18rem">
+        <img class="card-img-top" src="{{listing.imageUrl}}" alt="{{listing.title}}" />
+        <div class="card-body">
+            <h5 class="card-title">{{ listing.title}}</h5>
+            <p class="card-text">{{listing.description}}</p>
+            <a href="/" class="btn btn-primary">get back</a>
+            <p>created at: {{listing.created_at}}</p>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

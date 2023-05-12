@@ -16,15 +16,22 @@ def index(request):
         })
     
 
+def watchlist(request, pk):
+    if request.method == 'GET':
+        watchedListing = Listing.objects.filter(pk=pk)
+        return render(request, "auctions/watchlist.html",{'watchedListing':watchedListing})
+
+
 def creatCategory(request):
     if request.method == 'GET':
         creatCategory = Catagory.objects.all()
         return render(request, "auctions/creatCategory.html",{'creatCategory':creatCategory})
     else:
-        newCategory = request.POST.get('cateonew')
-        if newCategory == "":
-            message = "Couldn't find category"
-            return render(request, "auctions/creatCategory.html",{'message': message})
+        if request.method == 'POST':
+            newCategory = request.POST.get('cateonew')
+            if newCategory == "":
+                message = "Couldn't find category"
+                return render(request, "auctions/creatCategory.html",{'message': message})
         
         newcategeo = Catagory(
            categoryName = newCategory

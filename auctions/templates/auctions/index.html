@@ -18,7 +18,7 @@
         <div class="card-body">
             <h5 class="card-title">{{ listing.title}}</h5>
             <p class="card-text">{{listing.description}}</p>
-            <a href="#" class="btn btn-primary">Go somewhere</a>
+            <a href="{% url 'watchlist' pk=listing.id%}" class="btn btn-primary">Go somewhere</a>
             <p>created at: {{listing.created_at}}</p>
         </div>
     </div>
