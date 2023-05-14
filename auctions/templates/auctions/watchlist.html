@@ -1,7 +1,7 @@
 {% extends "auctions/layout.html" %}
 
 {% block body %}
-
+{{currentUser}}
 <div class="row">
     {% for listing in watchedListing %}
     <div class="card" style="width: 18rem">
@@ -14,5 +14,15 @@
         </div>
     </div>
     {% endfor %}
+
+
+    {% for alllistings in all_listings %}
+    <div class="card" style="width: 18rem">
+        <img class="card-img-top" src="{{alllistings.imageUrl}}" alt="{{alllistings.title}}" />
+        <p>{{alllistings.title}}</p>
+        <br>
+        <p class="card-text">{{alllistings.description}}</p>
+    </div>
+    {% endfor%}
 </div>
 {% endblock %}

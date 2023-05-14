@@ -4,7 +4,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
-from .models import User, Catagory, Listing
+from .models import User, Catagory, Listing, user_watchList
 from .form import MyForm
 
 def index(request):
@@ -16,11 +16,33 @@ def index(request):
         })
     
 
-def watchlist(request, pk):
-    if request.method == 'GET':
-        watchedListing = Listing.objects.filter(pk=pk)
-        return render(request, "auctions/watchlist.html",{'watchedListing':watchedListing})
-
+def watchlist(request):
+    if request.method == 'POST':
+        listing_id = request.POST.get('listing_id')
+        username = request.user
+        watchedListing = Listing.objects.filter(
+            id=listing_id,
+        )
+        newWatchList = user_watchList(
+            ownerWatchList=username,
+            idNumber=listing_id
+        )
+        existing_watchlist = user_watchList.objects.filter(
+            ownerWatchList=username, 
+            idNumber= listing_id
+         )
+        if existing_watchlist.exists():
+            return render(request, "auctions/creatCategory.html")
+        else:
+            newWatchList.save()
+            return render(request, "auctions/watchlist.html",{'watchedListing':watchedListing})
+    else:
+        if request.method == 'GET':
+            current_user = request.user
+            user_watchlists = user_watchList.objects.filter(ownerWatchList=current_user)
+            watched_listing_ids = [watchlist.idNumber for watchlist in user_watchlists]
+            all_listings = Listing.objects.filter(id__in=watched_listing_ids)
+        return render(request, "auctions/watchlist.html",{'all_listings':all_listings,})
 
 def creatCategory(request):
     if request.method == 'GET':

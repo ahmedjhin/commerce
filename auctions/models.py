@@ -19,13 +19,20 @@ class Listing(models.Model):
     imageUrl = models.CharField(max_length=1000)
     price = models.FloatField()
     isActive = models.BooleanField(default=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="user")
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="listings")
     category = models.ForeignKey(Catagory, on_delete=models.CASCADE, blank=True, null=True, related_name="category")
     created_at = models.DateTimeField(auto_now_add=True)
     
     def __str__(self):
         return self.title
     
+class user_watchList(models.Model):
+    ownerWatchList = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='watchlists')
+    idNumber = models.IntegerField()
+    listnaem = 'bengo'
+    def __str__(self):
+        return self.listnaem
+
 
 # class bids(models.Model):
 #     bids = models.FloatField()
