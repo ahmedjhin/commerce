@@ -4,6 +4,9 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render
 from django.urls import reverse
 
+from django.contrib.auth.decorators import login_required
+from django.views.decorators.csrf import csrf_protect
+
 from .models import User, Catagory, Listing, user_watchList
 from .form import MyForm
 
@@ -12,10 +15,11 @@ def index(request):
         activeListings = Listing.objects.filter(isActive=True)
         allCategories = Catagory.objects.all()
         return render(request, "auctions/index.html",{
-        'listings': activeListings,'catagories':allCategories
+        'listings': activeListings,'categories':allCategories
         })
     
-
+@login_required
+@csrf_protect
 def watchlist(request):
     if request.method == 'POST':
         listing_id = request.POST.get('listing_id')
