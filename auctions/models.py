@@ -31,7 +31,7 @@ class user_watchList(models.Model):
     idNumber = models.IntegerField()
     listnaem = 'bengo'
     def __str__(self):
-        return self.listnaem
+        return self.ownerWatchList
 
 
 # class bids(models.Model):
