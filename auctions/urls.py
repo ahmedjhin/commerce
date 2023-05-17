@@ -12,4 +12,5 @@ urlpatterns = [
     path('creatCategory',views.creatCategory, name='creatCategory'),
     #path('listing/<int:id>', views.listing, name='listing'),
     path('watchlist', views.watchlist, name='watchlist'),
+    path('Listingself/<int:pk>', views.Listingself, name='Listingself'),
 ]

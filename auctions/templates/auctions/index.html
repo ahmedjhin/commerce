@@ -19,9 +19,9 @@
             <div class="card-body">
                 <h5 class="card-title">{{ listing.title }}</h5>
                 <p class="card-text">{{ listing.description }}</p>
-                <form action="{% url 'watchlist' %}" method="POST">
+                <form action="{% url 'Listingself' pk=listing.id%}" method="POST">
                     {% csrf_token %}
-                    <button type="submit" class="btn btn-primary">Add to Watchlist</button>
+                    <button type="submit" class="btn btn-primary">More Details</button>
                     <input type="hidden" name="listing_id" value="{{ listing.id }}" />
                     <input type="hidden" name="username" value="{{ user.username }}" />
                 </form>

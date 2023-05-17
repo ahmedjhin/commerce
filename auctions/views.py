@@ -18,6 +18,13 @@ def index(request):
         'listings': activeListings,'categories':allCategories
         })
     
+
+
+
+def Listingself(request, pk):
+    all_listings = Listing.objects.filter(pk=pk)
+    return render(request, 'auctions/Listing.html',{'all_listings':all_listings})
+
 @login_required
 @csrf_protect
 def watchlist(request):
