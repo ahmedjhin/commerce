@@ -12,6 +12,7 @@
                     {% csrf_token %}
                     <h3> {{listing.price}}</h3>
                     <input type="number" class="form-control">
+                    <button type="submit" class="btn btn-primary" >Bid</button>
                     <button type="submit" class="btn btn-primary">Add to Watchlist</button>
                     <input type="hidden" name="listing_id" value="{{ listing.id }}" />
                     <input type="hidden" name="username" value="{{ user.username }}" />
