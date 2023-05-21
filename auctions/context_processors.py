@@ -6,4 +6,4 @@ def  my_variable(request):
         filterlist = user_watchList.objects.filter(ownerWatchList=current_user)
         x = len(filterlist)
         r = 'rrr'
-        return {'my_variable':'rr','current_user': request.user,'x':x}
+        return {'r':r,'current_user': request.user,'x':x}

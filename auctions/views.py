@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 
-from .models import User, Catagory, Listing, user_watchList
+from .models import User, Catagory, Listing, user_watchList, bids
 from .form import MyForm
 
 def index(request):
@@ -17,9 +17,23 @@ def index(request):
         return render(request, "auctions/index.html",{
         'listings': activeListings,'categories':allCategories
         })
-    
 
 
+def bidsr(request, pk):
+    if request.method == 'POST':
+        userbid = request.POST.get('bid')
+        currentuser = request.user
+        listnamer= request.POST.get('listname')
+        listnameE = Listing.objects.get(title=listnamer)
+        newbid = bids(
+            bidsa=userbid,
+            owner=currentuser,
+            listname=listnameE,
+        )      
+        newbid.save()
+
+    all_listings = Listing.objects.filter(pk=pk)
+    return render(request, 'auctions/Listing.html',{'all_listings':all_listings})
 
 def Listingself(request, pk):
     all_listings = Listing.objects.filter(pk=pk)

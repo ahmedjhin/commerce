@@ -32,9 +32,15 @@ class user_watchList(models.Model):
     listnaem = 'bengo'
     def __str__(self):
         return self.ownerWatchList
+    
 
 
-# class bids(models.Model):
-#     bids = models.FloatField()
-#     owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="user")
-#     listname = models.ForeignKey(Listing)
+
+
+class bids(models.Model):
+    bidsa = models.FloatField(max_length=10)
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="bids")
+    listname = models.ForeignKey(Listing, on_delete=models.CASCADE, blank=True, null=True)
+    
+    def __str__(self) :
+        return str(self.bidsa)
