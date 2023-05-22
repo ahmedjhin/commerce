@@ -25,15 +25,22 @@ def bidsr(request, pk):
         currentuser = request.user
         listnamer= request.POST.get('listname')
         listnameE = Listing.objects.get(title=listnamer)
-        newbid = bids(
-            bidsa=userbid,
-            owner=currentuser,
-            listname=listnameE,
-        )      
-        newbid.save()
 
-    all_listings = Listing.objects.filter(pk=pk)
-    return render(request, 'auctions/Listing.html',{'all_listings':all_listings})
+        all_listings = Listing.objects.filter(pk=pk)
+
+        existing_bid = bids.objects.filter(bidsa=userbid, owner=currentuser, listname=listnameE)
+        if existing_bid.exists():
+            message = 'You have already placed a bid with the same price.'
+            return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'message': message})
+        else:  
+            new_bid = bids(bidsa=userbid, owner=currentuser, listname=listnameE)
+            new_bid.save()
+            all_listings = Listing.objects.filter(pk=pk)
+            return render(request, 'auctions/Listing.html', {'all_listings': all_listings}) 
+
+            
+
+
 
 def Listingself(request, pk):
     all_listings = Listing.objects.filter(pk=pk)
