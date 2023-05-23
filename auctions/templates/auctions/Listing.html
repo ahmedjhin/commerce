@@ -8,12 +8,21 @@
             <div class="card-body">
                 <h5 class="card-title">{{ listing.title }}</h5>
                 <p class="card-text">{{ listing.description }}</p>
-                <h3> {{listing.price}}</h3>
-                <form action="{% url 'bidsr' pk=listing.id%} " method="POST">
+
+                <h3> original price {{listing.price}}</h3>
+                <div>
+                    bids
+                    {% for bid in bidforthis_list %}
+                    {{bid.bidsa}}
+                    {{bid.owner}}
+                    {% endfor %}
+                </div>
+                <form action="{% url 'Listingself' pk=listing.id%} " method="POST">
                     {% csrf_token %}
-                    <input type="number" value="bid" name="bid" id="bid" class="form-control">
+                    <input required type="number" value="bid" name="bid" id="bid" class="form-control">
                     <button type="submit" class="btn btn-primary">Bid</button>
                     <p>{{message}}</p>
+                    <input type="hidden" name="listing_id" value="{{ listing.id }}" />
                     <input type="hidden" name="listname" value="{{ listing.title }}" />
                 </form>
                 <form action="{% url 'watchlist' %}" method="POST">
@@ -21,6 +30,7 @@
                     <button type="submit" class="btn btn-primary">Add to Watchlist</button>
                     <input type="hidden" name="listing_id" value="{{ listing.id }}" />
                     <input type="hidden" name="username" value="{{ user.username }}" />
+                    <input type="hidden" name="listname" value="{{ listing.title }}" />
                 </form>
                 <p>Created at: {{ listing.created_at }}</p>
             </div>

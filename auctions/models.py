@@ -8,7 +8,7 @@ class User(AbstractUser):
 
 class Catagory(models.Model):
     categoryName = models.CharField(max_length=50)
-    
+
     def __str__(self):
         return self.categoryName
 
@@ -19,28 +19,33 @@ class Listing(models.Model):
     imageUrl = models.CharField(max_length=1000)
     price = models.FloatField()
     isActive = models.BooleanField(default=True)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="listings")
-    category = models.ForeignKey(Catagory, on_delete=models.CASCADE, blank=True, null=True, related_name="category")
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, blank=True, null=True, related_name="listings")
+    category = models.ForeignKey(
+        Catagory, on_delete=models.CASCADE, blank=True, null=True, related_name="category")
     created_at = models.DateTimeField(auto_now_add=True)
-    
+
     def __str__(self):
         return self.title
-    
+
+
 class user_watchList(models.Model):
-    ownerWatchList = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='watchlists')
+    ownerWatchList = models.ForeignKey(
+        User, on_delete=models.CASCADE, blank=True, null=True, related_name='watchlists')
     idNumber = models.IntegerField()
     listnaem = 'bengo'
+
     def __str__(self):
-        return self.ownerWatchList
-    
-
-
+        return self.listnaem
 
 
 class bids(models.Model):
     bidsa = models.FloatField(max_length=10)
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name="bids")
-    listname = models.ForeignKey(Listing, on_delete=models.CASCADE, blank=True, null=True)
-    
-    def __str__(self) :
+    owner = models.ForeignKey(
+        User, on_delete=models.CASCADE, blank=True, null=True, related_name="bids")
+    listname = models.ForeignKey(
+        Listing, on_delete=models.CASCADE, blank=True, null=True)
+    ListID = models.IntegerField(max_length=10)
+
+    def __str__(self):
         return str(self.bidsa)
