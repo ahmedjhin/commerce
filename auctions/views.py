@@ -6,7 +6,7 @@ from django.urls import reverse
 
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
-
+from django.db.models import Max
 from .models import User, Catagory, Listing, user_watchList, bids
 from .form import MyForm
 
@@ -24,37 +24,37 @@ def Listingself(request, pk):
     if request.method == 'POST':
         userbid = request.POST.get('bid')
         currentuser = request.user
-        listnameE = request.POST.get('listname')
         listIdd = request.POST.get('listing_id')
-        calistname = Listing.objects.filter(pk=pk)
         calistname1 = Listing.objects.get(pk=pk)
         existing_bid = bids.objects.filter(bidsa=userbid, owner=currentuser, listname=listIdd, ListID=listIdd)
+        bdiss = bids.objects.filter(ListID=listIdd)
+        max_amount = bdiss.aggregate(bidsa=Max('bidsa'))['bidsa']
         message = ''
         if existing_bid.exists():
             all_listings = Listing.objects.filter(pk=pk)
             message = 'You have already placed a bid with the same price.'
-            return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'message': message})
+            return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'message': message,'max_amount':max_amount})
         else:
             bidforthis_list = bids.objects.filter(ListID=listIdd)
             new_bid = bids(bidsa=userbid, owner=currentuser,
                            listname=calistname1, ListID=listIdd)
             new_bid.save()
             all_listings = Listing.objects.filter(pk=pk)
-            return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'bidforthis_list': bidforthis_list})
+            bdiss = bids.objects.filter(ListID=listIdd)
+            max_amount = bdiss.aggregate(bidsa=Max('bidsa'))['bidsa']
+            return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'bidforthis_list': bidforthis_list,'max_amount':max_amount})
     else:
         if request.method == 'GET':
             listingstitle = request.GET.get('listing_id')
             bidforthis_list = bids.objects.filter(ListID=listingstitle)
-            all_listings = Listing.objects.filter(pk=pk)
             currentuser = request.user
-            listnamer = request.GET.get('listing_title')
-            listnameE = Listing.objects.get(title=listnamer)
             listIdd = request.GET.get('listing_id')
-
+            bdiss = bids.objects.filter(ListID=listIdd)
+            max_amount = bdiss.aggregate(bidsa=Max('bidsa'))['bidsa']
+            bdisss = bids.objects.get(bidsa=max_amount)
             all_listings = Listing.objects.filter(pk=pk)
-
-            all_listings = Listing.objects.filter(pk=pk)
-            return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'bidforthis_list': bidforthis_list})
+            return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'bidforthis_list': bidforthis_list,
+                                                             'max_amount':max_amount,'bdisss':bdisss})
 
 
 @login_required

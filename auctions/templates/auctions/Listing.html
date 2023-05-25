@@ -12,10 +12,10 @@
                 <h3> original price {{listing.price}}</h3>
                 <div>
                     bids
-                    {% for bid in bidforthis_list %}
-                    {{bid.bidsa}}
-                    {{bid.owner}}
-                    {% endfor %}
+                    {{max_amount}}
+                    {{bdisss.owner}}
+                    
+                   
                 </div>
                 <form action="{% url 'Listingself' pk=listing.id%} " method="POST">
                     {% csrf_token %}
