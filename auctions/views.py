@@ -7,7 +7,7 @@ from django.urls import reverse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from django.db.models import Max
-from .models import User, Catagory, Listing, user_watchList, bids
+from .models import User, Catagory, Listing, user_watchList, bids, comments
 from .form import MyForm
 
 
@@ -55,6 +55,24 @@ def Listingself(request, pk):
             all_listings = Listing.objects.filter(pk=pk)
             return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'bidforthis_list': bidforthis_list,
                                                              'max_amount':max_amount,'bdisss':bdisss})
+
+def comment(request):
+    if request.method == 'POST':
+        req_user_ID = request.user
+        req_list_id = request.POST.get('listing_id')
+        req_comment = request.POST.get('comment')
+
+        List_id = Listing.objects.get(pk=req_list_id)
+
+        new_comment = comments(
+            list_ID=List_id,
+            user_ID=req_user_ID,
+            comment=req_comment,
+        )
+
+        new_comment.save()
+    return render(request, 'auctions/Listing.html',)
+
 
 
 @login_required
@@ -126,9 +144,7 @@ def createListeing(request):
         imageUrl = request.POST.get('ImageUrl')
         price = request.POST.get('Price')
         category = request.POST.get('category')
-
         currentUser = request.user
-
         categoryData = Catagory.objects.get(categoryName=category)
 
         newListing = Listing(
