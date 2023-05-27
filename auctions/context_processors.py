@@ -1,4 +1,4 @@
-from .models import User, Catagory, Listing, user_watchList
+from .models import User, Catagory, Listing, user_watchList, comments
 
 
 def  my_variable(request):
@@ -7,3 +7,8 @@ def  my_variable(request):
         x = len(filterlist)
         r = 'rrr'
         return {'r':r,'current_user': request.user,'x':x}
+
+
+def comments(request):
+        commentt = comments.objects.all()
+        return{'commentt':commentt}

@@ -52,6 +52,6 @@ class bids(models.Model):
 
 
 class comments(models.Model):
-    user_ID = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True, related_name='comments_user_id')
-    list_ID = models.ForeignKey(Listing, on_delete=models.CASCADE, blank=True, null=True, related_name='comments_list_id')
+    user_ID = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=True, related_name='comments_user_id')
+    list_ID = models.ForeignKey(Listing, on_delete=models.CASCADE, blank=False, null=True, related_name='comments_list_id')
     comment = models.CharField(max_length=300)

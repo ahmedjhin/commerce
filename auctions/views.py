@@ -22,6 +22,17 @@ def index(request):
 
 def Listingself(request, pk):
     if request.method == 'POST':
+        req_user_ID = request.user
+        req_list_id = request.POST.get('listing_id')
+        req_comment = request.POST.get('comment')
+        List_id = Listing.objects.get(pk=req_list_id)
+        new_comment = comments(
+            list_ID=List_id,
+            user_ID=req_user_ID,
+            comment=req_comment,
+        )
+        new_comment.save()
+
         userbid = request.POST.get('bid')
         currentuser = request.user
         listIdd = request.POST.get('listing_id')
@@ -53,25 +64,11 @@ def Listingself(request, pk):
             max_amount = bdiss.aggregate(bidsa=Max('bidsa'))['bidsa']
             bdisss = bids.objects.get(bidsa=max_amount)
             all_listings = Listing.objects.filter(pk=pk)
-            return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'bidforthis_list': bidforthis_list,
+            commentt = comments.objects.all()
+                
+            return render(request, 'auctions/Listing.html', {'commentt':commentt,'all_listings': all_listings, 'bidforthis_list': bidforthis_list,
                                                              'max_amount':max_amount,'bdisss':bdisss})
 
-def comment(request):
-    if request.method == 'POST':
-        req_user_ID = request.user
-        req_list_id = request.POST.get('listing_id')
-        req_comment = request.POST.get('comment')
-
-        List_id = Listing.objects.get(pk=req_list_id)
-
-        new_comment = comments(
-            list_ID=List_id,
-            user_ID=req_user_ID,
-            comment=req_comment,
-        )
-
-        new_comment.save()
-    return render(request, 'auctions/Listing.html',)
 
 
 

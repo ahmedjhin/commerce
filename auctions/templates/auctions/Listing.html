@@ -17,7 +17,7 @@
                     
                    
                 </div>
-                <form action="{% url 'Listingself' pk=listing.id%} " method="POST">
+                <form action="{% url 'Listingself' pk=listing.id %} " method="POST">
                     {% csrf_token %}
                     <input required type="number" value="bid" name="bid" id="bid" class="form-control">
                     <button type="submit" class="btn btn-primary">Bid</button>
@@ -25,7 +25,7 @@
                     <input type="hidden" name="listing_id" value="{{ listing.id }}" />
                     <input type="hidden" name="listname" value="{{ listing.title }}" />
                 </form>
-                <form action="{% url 'comment' %}" method="POST">
+                <form action="{% url 'Listingself' pk=listing.id %}" method="POST">
                     {% csrf_token %}
                     <input type="text" name="comment" /> 
                     <input type="hidden" name="listing_id" value="{{ listing.id }}" />
@@ -41,7 +41,13 @@
                     <input type="hidden" name="username" value="{{ user.username }}" />
                     <input type="hidden" name="listname" value="{{ listing.title }}" />
                 </form>
-                
+                {% for commente in commentt %}
+                <div>
+                    {{commente.list_ID}}
+                    {{commente.comment}}
+                    {{ commente.user_ID}}
+                </div>
+                {% endfor %}
                 <p>Created at: {{ listing.created_at }}</p>
             </div>
         </div>
