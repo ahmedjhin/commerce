@@ -33,7 +33,7 @@ def Listingself(request, pk):
         if existing_bid.exists():
             all_listings = Listing.objects.filter(pk=pk)
             message = 'You have already placed a bid with the same price.'
-            return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'message': message,'max_amount':max_amount,'bdisss': bdisss})
+            return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'message': message,'max_amount':max_amount,'bdiss': bdiss})
         else:
             bidforthis_list = bids.objects.filter(ListID=listIdd)
             new_bid = bids(bidsa=userbid, owner=currentuser,
