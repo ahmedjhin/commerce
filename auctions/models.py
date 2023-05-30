@@ -12,6 +12,9 @@ class Catagory(models.Model):
     def __str__(self):
         return self.categoryName
 
+    
+    def __str__(self) -> str:
+        return f" the comment  {self.comment}"
 
 class Listing(models.Model):
     title = models.CharField(max_length=30)
@@ -28,6 +31,7 @@ class Listing(models.Model):
     def __str__(self):
         return self.title
 
+ 
 
 class user_watchList(models.Model):
     ownerWatchList = models.ForeignKey(
@@ -40,7 +44,7 @@ class user_watchList(models.Model):
 
 
 class bids(models.Model):
-    bidsa = models.FloatField(max_length=10)
+    bidsa = models.FloatField(max_length=10 , null=True)
     owner = models.ForeignKey(
         User, on_delete=models.CASCADE, blank=True, null=True, related_name="bids")
     listname = models.ForeignKey(
@@ -49,7 +53,6 @@ class bids(models.Model):
 
     def __str__(self):
         return str(self.bidsa)
-
 
 class comments(models.Model):
     user_ID = models.ForeignKey(User, on_delete=models.CASCADE, blank=False, null=True, related_name='comments_user_id')

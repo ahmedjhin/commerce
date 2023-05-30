@@ -11,10 +11,10 @@
 
                 <h3> original price {{listing.price}}</h3>
                 <div>
-                    bids
+                   <h4>haighst bid</h4>
                     {{max_amount}}
                     {{bdisss.owner}}
-                    dd
+                 
                    
                 </div>
                 <form action="{% url 'Listingself' pk=listing.id %} " method="POST">
@@ -25,7 +25,7 @@
                     <input type="hidden" name="listing_id" value="{{ listing.id }}" />
                     <input type="hidden" name="listname" value="{{ listing.title }}" />
                 </form>
-                <form action="{% url 'Listingself' pk=listing.id %}" method="POST">
+                <form action="{% url 'commentsa' pk=listing.id %}" method="POST">
                     {% csrf_token %}
                     <input type="text" name="comment" /> 
                     <input type="hidden" name="listing_id" value="{{ listing.id }}" />
@@ -43,9 +43,9 @@
                 </form>
                 {% for commente in commentt %}
                 <div>
-                    {{commente.list_ID}}
-                    {{commente.comment}}
-                    {{ commente.user_ID}}
+                    <p>{{commente.user_ID}}</p>
+                   <p>{{commente.comment}}</p>
+                    
                 </div>
                 {% endfor %}
                 <p>Created at: {{ listing.created_at }}</p>

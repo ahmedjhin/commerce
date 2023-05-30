@@ -22,17 +22,6 @@ def index(request):
 
 def Listingself(request, pk):
     if request.method == 'POST':
-        req_user_ID = request.user
-        req_list_id = request.POST.get('listing_id')
-        req_comment = request.POST.get('comment')
-        List_id = Listing.objects.get(pk=req_list_id)
-        new_comment = comments(
-            list_ID=List_id,
-            user_ID=req_user_ID,
-            comment=req_comment,
-        )
-        new_comment.save()
-
         userbid = request.POST.get('bid')
         currentuser = request.user
         listIdd = request.POST.get('listing_id')
@@ -44,7 +33,7 @@ def Listingself(request, pk):
         if existing_bid.exists():
             all_listings = Listing.objects.filter(pk=pk)
             message = 'You have already placed a bid with the same price.'
-            return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'message': message,'max_amount':max_amount})
+            return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'message': message,'max_amount':max_amount,'bdisss': bdisss})
         else:
             bidforthis_list = bids.objects.filter(ListID=listIdd)
             new_bid = bids(bidsa=userbid, owner=currentuser,
@@ -53,7 +42,7 @@ def Listingself(request, pk):
             all_listings = Listing.objects.filter(pk=pk)
             bdiss = bids.objects.filter(ListID=listIdd)
             max_amount = bdiss.aggregate(bidsa=Max('bidsa'))['bidsa']
-            return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'bidforthis_list': bidforthis_list,'max_amount':max_amount})
+            return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'bidforthis_list': bidforthis_list,'max_amount':max_amount,'bdisss': bdisss})
     else:
         if request.method == 'GET':
             listingstitle = request.GET.get('listing_id')
@@ -61,15 +50,34 @@ def Listingself(request, pk):
             currentuser = request.user
             listIdd = request.GET.get('listing_id')
             bdiss = bids.objects.filter(ListID=listIdd)
-            max_amount = bdiss.aggregate(bidsa=Max('bidsa'))['bidsa']
-            bdisss = bids.objects.get(bidsa=max_amount)
+
+            try:
+                max_amount = bdiss.aggregate(bidsa=Max('bidsa'))['bidsa']
+                bdisss = bids.objects.get(bidsa=max_amount)
+            except (bids.DoesNotExist, TypeError):
+                max_amount = None  # Set max_amount to None or any other appropriate value
+                bdisss = None  # Set bdisss to None or any other appropriate value
+
             all_listings = Listing.objects.filter(pk=pk)
-            commentt = comments.objects.all()
-                
-            return render(request, 'auctions/Listing.html', {'commentt':commentt,'all_listings': all_listings, 'bidforthis_list': bidforthis_list,
-                                                             'max_amount':max_amount,'bdisss':bdisss})
+            commentt = comments.objects.filter(list_ID=pk)
+
+            return render(request, 'auctions/Listing.html', {'commentt': commentt, 'all_listings': all_listings, 'bidforthis_list': bidforthis_list,
+                                                            'max_amount': max_amount, 'bdisss': bdisss})
 
 
+def commentsa(request, pk):
+    if request.method == 'POST':
+        req_user_ID = request.user
+        req_list_id = request.POST.get('listing_id')
+        req_comment = request.POST.get('comment')
+        List_id = Listing.objects.get(pk=req_list_id)
+        new_comment = comments(
+            list_ID=List_id,
+            user_ID=req_user_ID,
+            comment=req_comment,
+        )
+        new_comment.save()
+        return HttpResponseRedirect(reverse('Listingself',args=(pk, )))
 
 
 @login_required
