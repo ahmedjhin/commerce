@@ -21,49 +21,37 @@ def index(request):
 
 
 def Listingself(request, pk):
-    if request.method == 'POST':
-        userbid = request.POST.get('bid')
-        currentuser = request.user
-        listIdd = request.POST.get('listing_id')
-        calistname1 = Listing.objects.get(pk=pk)
-        existing_bid = bids.objects.filter(bidsa=userbid, owner=currentuser, listname=listIdd, ListID=listIdd)
-        bdiss = bids.objects.filter(ListID=listIdd)
-        max_amount = bdiss.aggregate(bidsa=Max('bidsa'))['bidsa']
-        message = ''
-        if existing_bid.exists():
-            all_listings = Listing.objects.filter(pk=pk)
-            message = 'You have already placed a bid with the same price.'
-            return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'message': message,'max_amount':max_amount,'bdisss': bdisss})
-        else:
-            bidforthis_list = bids.objects.filter(ListID=listIdd)
-            new_bid = bids(bidsa=userbid, owner=currentuser,
-                           listname=calistname1, ListID=listIdd)
-            new_bid.save()
-            all_listings = Listing.objects.filter(pk=pk)
-            bdiss = bids.objects.filter(ListID=listIdd)
-            max_amount = bdiss.aggregate(bidsa=Max('bidsa'))['bidsa']
-            return render(request, 'auctions/Listing.html', {'all_listings': all_listings, 'bidforthis_list': bidforthis_list,'max_amount':max_amount,'bdisss': bdisss})
-    else:
         if request.method == 'GET':
-            listingstitle = request.GET.get('listing_id')
-            bidforthis_list = bids.objects.filter(ListID=listingstitle)
-            currentuser = request.user
-            listIdd = request.GET.get('listing_id')
-            bdiss = bids.objects.filter(ListID=listIdd)
 
+            bdiss = bids.objects.filter(ListID=pk)
             try:
                 max_amount = bdiss.aggregate(bidsa=Max('bidsa'))['bidsa']
-                bdisss = bids.objects.get(bidsa=max_amount)
-            except (bids.DoesNotExist, TypeError):
+                bdiss = bids.objects.filter(bidsa=max_amount)
+            except (bdiss.DoesNotExist, TypeError):
                 max_amount = None  # Set max_amount to None or any other appropriate value
-                bdisss = None  # Set bdisss to None or any other appropriate value
-
+                bdiss = None  # Set bdiss to None or any other appropriate value
             all_listings = Listing.objects.filter(pk=pk)
             commentt = comments.objects.filter(list_ID=pk)
+            bidusername = bids.objects.filter(pk=pk)
+            return render(request, 'auctions/Listing.html', {'commentt': commentt, 'all_listings': all_listings, 'bdiss': bdiss,
+                                                            'max_amount': max_amount, 'bidusername': bidusername})
 
-            return render(request, 'auctions/Listing.html', {'commentt': commentt, 'all_listings': all_listings, 'bidforthis_list': bidforthis_list,
-                                                            'max_amount': max_amount, 'bdisss': bdisss})
-
+def bid(request, pk):
+    if request.method == 'POST':
+            userbid = request.POST.get('bid')
+            currentuser = request.user
+            listIdd = request.POST.get('listing_id')
+            calistname1 = Listing.objects.get(pk=pk)
+            existing_bid = bids.objects.filter(bidsa=userbid, owner=currentuser, listname=listIdd, ListID=listIdd)
+            message = ''
+            if existing_bid.exists():
+                message = 'Bid Already exists'
+                return redirect(reverse('Listingself',args=(pk,)))
+            else:
+                new_bid = bids(bidsa=userbid, owner=currentuser,
+                            listname=calistname1, ListID=listIdd)
+                new_bid.save()
+                return redirect(reverse('Listingself',args=(pk,)))
 
 def commentsa(request, pk):
     if request.method == 'POST':
@@ -77,7 +65,7 @@ def commentsa(request, pk):
             comment=req_comment,
         )
         new_comment.save()
-        return HttpResponseRedirect(reverse('Listingself',args=(pk, )))
+        return redirect(reverse("Listingself",args=(pk,)))
 
 
 @login_required
@@ -92,7 +80,6 @@ def watchlist(request):
         existing_watchlist = user_watchList.objects.filter(
             ownerWatchList=username, idNumber=listing_id)
         if existing_watchlist.exists():
-
             return render(request, "auctions/Watchlist.html", {'watchedListing': watchedListing})
         else:
             newWatchList.save()
@@ -124,7 +111,7 @@ def creatCategory(request):
         )
 
         newcategeo.save()
-        return HttpResponseRedirect(reverse(index))
+        return HttpResponseRedirect(reverse("index"))
 
 
 def displayCategory(request):
