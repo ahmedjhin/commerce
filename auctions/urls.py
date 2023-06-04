@@ -13,5 +13,6 @@ urlpatterns = [
     #path('listing/<int:id>', views.listing, name='listing'),
     path('watchlist', views.watchlist, name='watchlist'),
     path('Listingself/<int:pk>', views.Listingself, name='Listingself'),
-    path('/<int:pk>', views.commentsa, name='commentsa'),
+    path('commentsAL/<int:pk>', views.commentsa, name='commentsa'),
+    path('bid/<int:pk>', views.bid, name='bid'),
 ]

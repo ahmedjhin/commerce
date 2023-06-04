@@ -3,6 +3,15 @@
 
 <div  class="row">
     {% for listing in all_listings %}
+    
+    <form action="{% url 'watchlist' %}" method="POST">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-primary">Add to Watchlist</button>
+        <input type="hidden" name="listing_id" value="{{ listing.id }}" />
+        <input type="hidden" name="username" value="{{ user.username }}" />
+        <input type="hidden" name="listname" value="{{ listing.title }}" />
+    </form>
+
         <div class="card" style="width: 18rem">
             <img class="card-img-top" src="{{ listing.imageUrl }}" alt="{{ listing.title }}" />
             <div class="card-body">
@@ -13,11 +22,11 @@
                 <div>
                    <h4>haighst bid</h4>
                     {{max_amount}}
-                    {{bdisss.owner}}
-                 
-                   
+                    
+                    {{ bdiss.user_ID }}
+                    
                 </div>
-                <form action="{% url 'Listingself' pk=listing.id %} " method="POST">
+                <form action="{% url 'bid' pk=listing.id %} " method="POST">
                     {% csrf_token %}
                     <input required type="number" value="bid" name="bid" id="bid" class="form-control">
                     <button type="submit" class="btn btn-primary">Bid</button>
@@ -30,9 +39,7 @@
                     <input type="text" name="comment" /> 
                     <input type="hidden" name="listing_id" value="{{ listing.id }}" />
                     <input type="hidden" name="username" value="{{ user.username }}" />
-
                     <button type="submit" class="btn btn-primary">Comment</button>
-                    
                 </form>
                 <form action="{% url 'watchlist' %}" method="POST">
                     {% csrf_token %}
