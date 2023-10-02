@@ -1,63 +1,97 @@
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
-from django.http import HttpResponse, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
+from django.core.exceptions import ObjectDoesNotExist
 
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_protect
 from django.db.models import Max
-from .models import User, Catagory, Listing, user_watchList, bids, comments
-from .form import MyForm
+from .models import User, Catagory, Listing, bids, comments
+from django import forms
+    
+    
+class NewTaskForm(forms.Form):
+    task = forms.CharField(max_length=20,label="New Task")
 
 
 def index(request):
     if request.method == 'GET':
         activeListings = Listing.objects.filter(isActive=True)
         allCategories = Catagory.objects.all()
+
         return render(request, "auctions/index.html", {
             'listings': activeListings, 'categories': allCategories
         })
 
 
 def Listingself(request, pk):
-        if request.method == 'GET':
+    if request.method == 'GET':
+        user = request.user
+        listingData = Listing.objects.get(pk=pk)
+        isListingInWatchList = request.user in listingData.watchlist.all()
+        bdiss = bids.objects.filter(ListID=pk)
+        
+        try:
+            max_amount = bdiss.aggregate(bidsa=Max('bidsa'))['bidsa']
+            bdiss = bids.objects.filter(bidsa=max_amount)
+            
+        except ObjectDoesNotExist:
+            max_amount = None  # Set max_amount to None or any other appropriate value
+            bdiss = None  # Set bdiss to None or any other appropriate value
+        except TypeError:
+            max_amount = None
+            bdiss = None
+        
+        all_listings = Listing.objects.filter(pk=pk)
+        commentt = list(comments.objects.filter(list_ID=pk))
+        reversed_comment = list(reversed(commentt))
+        bidusername = bids.objects.filter(pk=pk)
+        return render(request, 'auctions/Listing.html', {'isListingInWatchList': isListingInWatchList,
+                                                        'commentt': reversed_comment,
+                                                        'all_listings': all_listings,
+                                                        'bdiss': bdiss,
+                                                        'max_amount': max_amount,
+                                                        'bidusername': bidusername,
+                                                        'user': user,})
 
-            bdiss = bids.objects.filter(ListID=pk)
-            try:
-                max_amount = bdiss.aggregate(bidsa=Max('bidsa'))['bidsa']
-                bdiss = bids.objects.filter(bidsa=max_amount)
-            except (bdiss.DoesNotExist, TypeError):
-                max_amount = None  # Set max_amount to None or any other appropriate value
-                bdiss = None  # Set bdiss to None or any other appropriate value
-            all_listings = Listing.objects.filter(pk=pk)
-            commentt = comments.objects.filter(list_ID=pk)
-            bidusername = bids.objects.filter(pk=pk)
-            return render(request, 'auctions/Listing.html', {'commentt': commentt, 'all_listings': all_listings, 'bdiss': bdiss,
-                                                            'max_amount': max_amount, 'bidusername': bidusername})
+
+def closeAction(request, pk):
+    listingData = Listing.objects.get(pk=pk)
+    listingData.isActive = False
+    listingData.save()
+    winerName = request.POST.get('winner.name')
+    number = request.POST.get('winner.id')
+    
+    message = f"congrats {winerName} {number}"
+    return  redirect(reverse('Listingself', args=(pk,)))
+
 
 def bid(request, pk):
     if request.method == 'POST':
-            userbid = request.POST.get('bid')
-            currentuser = request.user
-            listIdd = request.POST.get('listing_id')
-            calistname1 = Listing.objects.get(pk=pk)
-            existing_bid = bids.objects.filter(bidsa=userbid, owner=currentuser, listname=listIdd, ListID=listIdd)
-            message = ''
-            if existing_bid.exists():
-                message = 'Bid Already exists'
-                return redirect(reverse('Listingself',args=(pk,)))
-            else:
-                new_bid = bids(bidsa=userbid, owner=currentuser,
-                            listname=calistname1, ListID=listIdd)
-                new_bid.save()
-                return redirect(reverse('Listingself',args=(pk,)))
+        userbid = request.POST.get('bid')
+        currentuser = request.user
+        listIdd = request.POST.get('listing_id')
+        calistname1 = Listing.objects.get(pk=pk)
+        existing_bid = bids.objects.filter(
+            bidsa=userbid, owner=currentuser, listname=listIdd, ListID=listIdd)
+        message = ''
+        if existing_bid.exists():
+            message = 'Bid Already exists'
+            return redirect(reverse('Listingself', args=(pk,)))
+        else:
+            new_bid = bids(bidsa=userbid, owner=currentuser,
+                           listname=calistname1, ListID=listIdd)
+            new_bid.save()
+            return redirect(reverse('Listingself', args=(pk,)))
+
 
 def commentsa(request, pk):
     if request.method == 'POST':
         req_user_ID = request.user
         req_list_id = request.POST.get('listing_id')
-        req_comment = request.POST.get('comment')
+        req_comment = request.POST.get('comenta')
         List_id = Listing.objects.get(pk=req_list_id)
         new_comment = comments(
             list_ID=List_id,
@@ -65,34 +99,42 @@ def commentsa(request, pk):
             comment=req_comment,
         )
         new_comment.save()
-        return redirect(reverse("Listingself",args=(pk,)))
+        return redirect(reverse("Listingself", args=(pk,)))
+
+
+def delete_comment(request, pk):
+    if request.method == 'POST':
+        user = request.user
+        dd = request.POST.get('comment-pk')
+        commentid = request.POST.get('comment-id')
+        skrt = request.POST.get('coment')
+        comment = comments.objects.get(comment=skrt)
+        comment.delete()
+        return redirect(reverse("Listingself", args=(pk,)))
 
 
 @login_required
 @csrf_protect
 def watchlist(request):
-    if request.method == 'POST':
-        listing_id = request.POST.get('listing_id')
-        username = request.user
-        watchedListing = Listing.objects.filter(id=listing_id,)
-        newWatchList = user_watchList(
-            ownerWatchList=username, idNumber=listing_id)
-        existing_watchlist = user_watchList.objects.filter(
-            ownerWatchList=username, idNumber=listing_id)
-        if existing_watchlist.exists():
-            return render(request, "auctions/Watchlist.html", {'watchedListing': watchedListing})
-        else:
-            newWatchList.save()
-            return render(request, "auctions/watchlist.html", {'watchedListing': watchedListing})
-    else:
-        if request.method == 'GET':
-            current_user = request.user
-            user_watchlists = user_watchList.objects.filter(
-                ownerWatchList=current_user)
-            watched_listing_ids = [
-                watchlist.idNumber for watchlist in user_watchlists]
-            all_listings = Listing.objects.filter(id__in=watched_listing_ids)
-        return render(request, "auctions/watchlist.html", {'all_listings': all_listings, })
+    current_user = request.user
+    watchedlists = Listing.objects.filter(watchlist = current_user)
+    return render(request, "auctions/watchlist.html", {'watchedlists': watchedlists})
+
+
+def addWathcList(request, pk):
+    ListingData = Listing.objects.get(pk=pk)
+    current_user = request.user
+    ListingData.watchlist.add(current_user)
+    ListingData.save()
+    return redirect(reverse("index"))
+
+
+def removewatchList(request, pk):
+    ListingData = Listing.objects.get(pk=pk)
+    current_user = request.user
+    ListingData.watchlist.remove(current_user)
+    ListingData.save()
+    return redirect(reverse("Listingself", args=(pk,)))
 
 
 def creatCategory(request):
@@ -105,13 +147,15 @@ def creatCategory(request):
             if newCategory == "":
                 message = "Couldn't find category"
                 return render(request, "auctions/creatCategory.html", {'message': message})
+            else:
+                newcategeo = Catagory(categoryName=newCategory)
+                newcategeo.save()
+            return HttpResponseRedirect(reverse("index"))
+        
 
-        newcategeo = Catagory(
-            categoryName=newCategory
-        )
 
-        newcategeo.save()
-        return HttpResponseRedirect(reverse("index"))
+def TT(request):
+    return render(request, "auctions/selectedCategory.html")
 
 
 def displayCategory(request):
@@ -122,7 +166,7 @@ def displayCategory(request):
             isActive=True, category=category)
         allCategories = Catagory.objects.all()
         return render(request, "auctions/index.html", {
-            'listings': activeListings, 'catagories': allCategories
+            'listings': activeListings, 'categories': allCategories
         })
 
 

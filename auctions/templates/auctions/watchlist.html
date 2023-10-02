@@ -3,7 +3,7 @@
 {% block body %}
 {{currentUser}}
 <div class="row">
-    {% for listing in watchedListing %}
+    {% for listing in watchedlists %}
     <div class="card" style="width: 18rem">
         <img class="card-img-top" src="{{listing.imageUrl}}" alt="{{listing.title}}" />
         <div class="card-body">
@@ -11,6 +11,11 @@
             <p class="card-text">{{listing.description}}</p>
             <a href="/" class="btn btn-primary">get back</a>
             <p>created at: {{listing.created_at}}</p>
+
+            <form action="{% url 'removewatchList' pk=listing.id%}" method="post">
+            {% csrf_token %}
+            <button type="submit">remove From watchlist</button>
+            </form>
         </div>
     </div>
     {% endfor %}

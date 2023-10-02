@@ -4,7 +4,7 @@
 <div  class="row">
     {% for listing in all_listings %}
     
-    <form action="{% url 'watchlist' %}" method="POST">
+    <form action="{% url 'addWathcList' pk=listing.id %}" method="POST">
         {% csrf_token %}
         <button type="submit" class="btn btn-primary">Add to Watchlist</button>
         <input type="hidden" name="listing_id" value="{{ listing.id }}" />
@@ -22,8 +22,7 @@
                 <div>
                    <h4>haighst bid</h4>
                     {{max_amount}}
-                    
-                    {{ bdiss.user_ID }}
+                    {{bdiss.user_ID}}
                     
                 </div>
                 <form action="{% url 'bid' pk=listing.id %} " method="POST">
